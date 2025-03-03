@@ -1,3 +1,4 @@
+import 'package:assignment_3/API_CRUD_Project.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
@@ -27,12 +28,8 @@ class myApp extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blueAccent,
                         foregroundColor: Colors.white))),
-            title: "Ajnu",
-            home:Scaffold(
-              appBar: AppBar(
-                title: Text('kazii'),
-              ),
-            ) ,
+            title: "Flutter App",
+            home:ApiCrudProject(),
           );
         }
     );
