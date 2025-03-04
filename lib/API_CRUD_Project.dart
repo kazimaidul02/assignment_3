@@ -11,7 +11,10 @@ class ApiCrudProject extends StatefulWidget {
 class _ApiCrudProjectState extends State<ApiCrudProject> {
 
   final ProductController productController = ProductController();
-  void productDialog() {
+
+  void productDialog(
+      {String ? id, String ? name, int ?qty, String ? img, int? unitPrice, int? totalPrice}) {
+
     TextEditingController productNameController = TextEditingController();
     TextEditingController productCodeController = TextEditingController();
     TextEditingController productQtyController = TextEditingController();
@@ -19,10 +22,16 @@ class _ApiCrudProjectState extends State<ApiCrudProject> {
     TextEditingController productUnitPriceController = TextEditingController();
     TextEditingController productTotalPriceController = TextEditingController();
 
+    productNameController.text = name ?? '';
+    productQtyController.text =qty.toString() ?? '' ;
+    productImageController.text =img ?? '';
+    productUnitPriceController.text =unitPrice.toString() ?? '';
+    productTotalPriceController.text =totalPrice.toString() ?? '';
+
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Add product'),
+          title: Text(id ==null ? 'Add product' : 'Update product'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -59,14 +68,20 @@ class _ApiCrudProjectState extends State<ApiCrudProject> {
                   }, child: Text('Close')),
                   SizedBox(width: 5,),
                   ElevatedButton(onPressed: (){
-                    setState(() {
-                      productController.createProducts(productNameController.text, productImageController.text, int.parse(productQtyController.text), int.parse(productUnitPriceController.text), int.parse(productTotalPriceController.text));
+
+                      if (id == null ){
+                        productController.createProducts(productNameController.text, productImageController.text, int.parse(productQtyController.text), int.parse(productUnitPriceController.text), int.parse(productTotalPriceController.text));
+                      }else{
+                        productController.UpdateProducts(id,productNameController.text, productImageController.text, int.parse(productQtyController.text), int.parse(productUnitPriceController.text), int.parse(productTotalPriceController.text));
+                      }
+
                       fetchData();
                       Navigator.pop(context);
+                      setState(() {
 
                     });
 
-                  }, child: Text("Add product ")),
+                  }, child: Text(id ==null ? 'Add product' : 'Update product'),),
                 ],
               )
             ],
@@ -103,26 +118,62 @@ class _ApiCrudProjectState extends State<ApiCrudProject> {
               elevation: 4,
               margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: ListTile(
-                //leading: Image.network(product['Img'],width: 150,fit:BoxFit.contain ,),
+                leading: Image.network(product.img.toString(),width: 150,fit:BoxFit.contain ,),
                 title: Text(
-                  product['ProductName'],
+                  product.productName.toString(),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 subtitle: Text(
-                  'price: \$ ${product['TotalPrice']} | Qty: ${product['Qty']}',
+                  'price: \$ ${product.unitPrice} | Qty: ${product.qty}',
                   style: TextStyle(),
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(onPressed: () => productDialog(), icon: Icon(Icons.edit)),
+                    IconButton(onPressed: () => productDialog(
+                      id: product.sId,
+                      name: product.productName,
+                      img: product.img,
+                      qty: product.qty,
+                      unitPrice: product.unitPrice,
+                      totalPrice: product.totalPrice,
+
+
+
+                    ), icon: Icon(Icons.edit)),
                     SizedBox(
                       width: 10,
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+
+                            productController.deleteProducts(product.sId.toString()).then((value){
+                              if(value){
+                                setState(() {
+                                  fetchData();
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Product deleted"),
+                                    duration: Duration(seconds: 2),
+
+                                  ),
+                                );
+                              }else{
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Something wrong try again"),
+                                    duration: Duration(seconds: 2),
+
+                                  ),
+                                );
+
+                              }
+                            });
+
+
+                        },
                         icon: Icon(
                           Icons.delete,
                           color: Colors.red,
