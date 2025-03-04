@@ -1,4 +1,5 @@
 import 'package:assignment_3/ProductController.dart';
+import 'package:assignment_3/widget/product_Card.dart';
 import 'package:flutter/material.dart';
 
 class ApiCrudProject extends StatefulWidget {
@@ -12,21 +13,20 @@ class _ApiCrudProjectState extends State<ApiCrudProject> {
 
   final ProductController productController = ProductController();
 
-  void productDialog(
-      {String ? id, String ? name, int ?qty, String ? img, int? unitPrice, int? totalPrice}) {
+  void productDialog({String ? id, String ? name, int ?qty, String ? img, int? unitPrice, int? totalPrice}) {
 
     TextEditingController productNameController = TextEditingController();
-    TextEditingController productCodeController = TextEditingController();
+   //TextEditingController productCodeController = TextEditingController();
     TextEditingController productQtyController = TextEditingController();
     TextEditingController productImageController = TextEditingController();
     TextEditingController productUnitPriceController = TextEditingController();
     TextEditingController productTotalPriceController = TextEditingController();
 
     productNameController.text = name ?? '';
-    productQtyController.text =qty.toString() ?? '' ;
+    productQtyController.text =qty  !=null ? qty.toString() :'0' ;
     productImageController.text =img ?? '';
-    productUnitPriceController.text =unitPrice.toString() ?? '';
-    productTotalPriceController.text =totalPrice.toString() ?? '';
+    productUnitPriceController.text =unitPrice !=null ? unitPrice.toString() : '0';
+    productTotalPriceController.text =totalPrice !=null ? totalPrice.toString() : '0';
 
     showDialog(
         context: context,
@@ -107,82 +107,54 @@ class _ApiCrudProjectState extends State<ApiCrudProject> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: Text("Products"),
       ),
-      body: ListView.builder(
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount:2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.8
+        ),
           itemCount: productController.products.length,
           itemBuilder: (context, index) {
             var product = productController.products[index];
-            return Card(
-              elevation: 4,
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: ListTile(
-                leading: Image.network(product.img.toString(),width: 150,fit:BoxFit.contain ,),
-                title: Text(
-                  product.productName.toString(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                subtitle: Text(
-                  'price: \$ ${product.unitPrice} | Qty: ${product.qty}',
-                  style: TextStyle(),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(onPressed: () => productDialog(
-                      id: product.sId,
-                      name: product.productName,
-                      img: product.img,
-                      qty: product.qty,
-                      unitPrice: product.unitPrice,
-                      totalPrice: product.totalPrice,
-
-
-
-                    ), icon: Icon(Icons.edit)),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                        onPressed: () {
-
-                            productController.deleteProducts(product.sId.toString()).then((value){
-                              if(value){
-                                setState(() {
-                                  fetchData();
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Product deleted"),
-                                    duration: Duration(seconds: 2),
-
-                                  ),
-                                );
-                              }else{
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Something wrong try again"),
-                                    duration: Duration(seconds: 2),
-
-                                  ),
-                                );
-
-                              }
-                            });
-
-
-                        },
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        )),
-                  ],
-                ),
+            return ProductCard(product:product,
+              onEdit: ()=> productDialog(
+                id: product.sId,
+                name: product.productName,
+                img: product.img,
+                qty: product.qty,
+                unitPrice: product.unitPrice,
+                totalPrice: product.totalPrice,
               ),
+              onDelete: (){
+                productController.deleteProducts(product.sId.toString()).then((value){
+                  if(value){
+                    setState(() {
+                      fetchData();
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Product deleted"),
+                        duration: Duration(seconds: 2),
+
+                      ),
+                    );
+                  }else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Something wrong try again"),
+                        duration: Duration(seconds: 2),
+
+                      ),
+                    );
+                  }
+                });
+                },
             );
-          }),
+          }, ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => productDialog(),
         child: Icon(Icons.add),
