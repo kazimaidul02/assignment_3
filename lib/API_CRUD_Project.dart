@@ -16,7 +16,6 @@ class _ApiCrudProjectState extends State<ApiCrudProject> {
   void productDialog({String ? id, String ? name, int ?qty, String ? img, int? unitPrice, int? totalPrice}) {
 
     TextEditingController productNameController = TextEditingController();
-   //TextEditingController productCodeController = TextEditingController();
     TextEditingController productQtyController = TextEditingController();
     TextEditingController productImageController = TextEditingController();
     TextEditingController productUnitPriceController = TextEditingController();

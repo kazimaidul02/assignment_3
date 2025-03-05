@@ -1,4 +1,5 @@
-import 'package:assignment_3/model/product.dart';
+import 'package:assignment_3/data/model/product.dart';
+
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -54,7 +55,7 @@ class ProductCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-      
+
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
                   child: Row(
