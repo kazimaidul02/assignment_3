@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:assignment_3/data/model/product.dart';
-import 'package:assignment_3/utils/urls.dart';
+import 'package:assignment_3/data/utils/urls.dart';
 import 'package:http/http.dart' as http;
 
 
