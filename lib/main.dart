@@ -1,4 +1,4 @@
-import 'package:assignment_3/myApp.dart';
+import 'package:assignment_3/Presentation/ui/screens/myApp.dart';
 import 'package:flutter/material.dart';
 
 void main (){
